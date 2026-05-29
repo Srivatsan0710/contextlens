@@ -1,6 +1,6 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
-window.ContextLens.calculatePosition = function (selectionRect) {
+window.ReadIn.calculatePosition = function (selectionRect) {
   const CARD_WIDTH = 380;
   const CARD_ESTIMATED_HEIGHT = 300;
   const OFFSET = 12;

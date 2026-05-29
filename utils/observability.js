@@ -1,22 +1,22 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
 const _enabled = true;
 const _timers = {};
 
-window.ContextLens.logEvent = function (tag, data = {}) {
+window.ReadIn.logEvent = function (tag, data = {}) {
   if (!_enabled) return;
-  console.log(`[ContextLens:${tag}]`, data);
+  console.log(`[ReadIn:${tag}]`, data);
 };
 
-window.ContextLens.logTimerStart = function (id) {
+window.ReadIn.logTimerStart = function (id) {
   _timers[id] = performance.now();
 };
 
-window.ContextLens.logTimerEnd = function (id, tag, extraData = {}) {
+window.ReadIn.logTimerEnd = function (id, tag, extraData = {}) {
   const start = _timers[id];
   if (!start) return null;
   delete _timers[id];
   const latency = Math.round(performance.now() - start);
-  window.ContextLens.logEvent(tag, { ...extraData, latency: `${latency}ms` });
+  window.ReadIn.logEvent(tag, { ...extraData, latency: `${latency}ms` });
   return latency;
 };

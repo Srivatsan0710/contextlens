@@ -1,8 +1,8 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
 let _cachedPageContext = null;
 
-window.ContextLens.getPageContext = function () {
+window.ReadIn.getPageContext = function () {
   if (_cachedPageContext) return _cachedPageContext;
 
   _cachedPageContext = {
@@ -12,7 +12,7 @@ window.ContextLens.getPageContext = function () {
   return _cachedPageContext;
 };
 
-window.ContextLens.getSurroundingContext = function (selectedText) {
+window.ReadIn.getSurroundingContext = function (selectedText) {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) return '';
 

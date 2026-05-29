@@ -1,4 +1,4 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
 // ===================== OUTPUT SANITIZER =====================
 
@@ -17,7 +17,7 @@ function sanitizeOutput(text) {
 
 let _activeAbortController = null;
 
-window.ContextLens.abortPending = function () {
+window.ReadIn.abortPending = function () {
   if (_activeAbortController) {
     _activeAbortController.abort();
     _activeAbortController = null;
@@ -85,18 +85,18 @@ function cacheKey(selectedText, intent) {
 async function getFromCache(selectedText, intent) {
   const key = cacheKey(selectedText, intent);
   if (_memoryCache[key]) {
-    window.ContextLens.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: true, source: 'memory' });
+    window.ReadIn.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: true, source: 'memory' });
     return _memoryCache[key];
   }
   try {
     const result = await chrome.storage.session.get([key]);
     if (result[key]) {
       _memoryCache[key] = result[key];
-      window.ContextLens.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: true, source: 'session' });
+      window.ReadIn.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: true, source: 'session' });
       return result[key];
     }
   } catch (e) {}
-  window.ContextLens.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: false });
+  window.ReadIn.logEvent('CACHE', { intent, key: key.slice(0, 60), hit: false });
   return null;
 }
 
@@ -110,24 +110,24 @@ async function setCache(selectedText, intent, value) {
 
 // ===================== FREE DICTIONARY API (Tier 0) =====================
 
-window.ContextLens.fetchDictionaryDefinition = async function (word) {
+window.ReadIn.fetchDictionaryDefinition = async function (word) {
   try {
-    window.ContextLens.logEvent('DICT_REQ', { word });
+    window.ReadIn.logEvent('DICT_REQ', { word });
     const resp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.toLowerCase())}`);
     if (!resp.ok) {
-      window.ContextLens.logEvent('DICT_RES', { word, found: false, status: resp.status });
+      window.ReadIn.logEvent('DICT_RES', { word, found: false, status: resp.status });
       return null;
     }
 
     const data = await resp.json();
     if (!Array.isArray(data) || data.length === 0) {
-      window.ContextLens.logEvent('DICT_RES', { word, found: false, reason: 'empty response' });
+      window.ReadIn.logEvent('DICT_RES', { word, found: false, reason: 'empty response' });
       return null;
     }
 
     const meanings = data[0].meanings || [];
     if (meanings.length === 0) {
-      window.ContextLens.logEvent('DICT_RES', { word, found: false, reason: 'no meanings' });
+      window.ReadIn.logEvent('DICT_RES', { word, found: false, reason: 'no meanings' });
       return null;
     }
 
@@ -136,7 +136,7 @@ window.ContextLens.fetchDictionaryDefinition = async function (word) {
     const definition = firstMeaning.definitions?.[0]?.definition || '';
 
     if (!definition) {
-      window.ContextLens.logEvent('DICT_RES', { word, found: false, reason: 'no definition text' });
+      window.ReadIn.logEvent('DICT_RES', { word, found: false, reason: 'no definition text' });
       return null;
     }
 
@@ -146,10 +146,10 @@ window.ContextLens.fetchDictionaryDefinition = async function (word) {
       definition,
       phonetic: data[0].phonetic || data[0].phonetics?.[0]?.text || ''
     };
-    window.ContextLens.logEvent('DICT_RES', { word: result.word, found: true, partOfSpeech, definition: result.definition.slice(0, 80) });
+    window.ReadIn.logEvent('DICT_RES', { word: result.word, found: true, partOfSpeech, definition: result.definition.slice(0, 80) });
     return result;
   } catch (e) {
-    window.ContextLens.logEvent('DICT_RES', { word, found: false, error: e.message });
+    window.ReadIn.logEvent('DICT_RES', { word, found: false, error: e.message });
     return null;
   }
 };
@@ -175,8 +175,8 @@ async function callLLM(prompt) {
   const config = await getLLMConfig();
   if (!config.key) throw new Error('NO_API_KEY');
 
-  window.ContextLens.logEvent('LLM_REQ', { provider: config.provider, model: config.model, promptLength: prompt.length });
-  window.ContextLens.logTimerStart('llm');
+  window.ReadIn.logEvent('LLM_REQ', { provider: config.provider, model: config.model, promptLength: prompt.length });
+  window.ReadIn.logTimerStart('llm');
 
   const signal = getAbortSignal();
   let response;
@@ -231,7 +231,7 @@ async function callLLM(prompt) {
     await incrementUsage('gemini');
   }
 
-  const latency = window.ContextLens.logTimerEnd('llm', 'LLM_RES', { responseLength: raw.length });
+  const latency = window.ReadIn.logTimerEnd('llm', 'LLM_RES', { responseLength: raw.length });
   return sanitizeOutput(raw);
 }
 
@@ -261,8 +261,8 @@ async function callTavily(query, tavilyKey, classification) {
     body.days = 30;
   }
 
-  window.ContextLens.logEvent('TAVILY_REQ', { query, topic: body.topic || 'general', days: body.days || null });
-  window.ContextLens.logTimerStart('tavily');
+  window.ReadIn.logEvent('TAVILY_REQ', { query, topic: body.topic || 'general', days: body.days || null });
+  window.ReadIn.logTimerStart('tavily');
 
   const response = await fetch('https://api.tavily.com/search', {
     method: 'POST',
@@ -288,7 +288,7 @@ async function callTavily(query, tavilyKey, classification) {
     publishedDate: r.published_date || null
   }));
 
-  window.ContextLens.logTimerEnd('tavily', 'TAVILY_RES', { resultCount: results.length, titles: results.map(r => r.title), dates: results.map(r => r.publishedDate) });
+  window.ReadIn.logTimerEnd('tavily', 'TAVILY_RES', { resultCount: results.length, titles: results.map(r => r.title), dates: results.map(r => r.publishedDate) });
   return results;
 }
 
@@ -401,11 +401,11 @@ async function getTavilyKey() {
 }
 
 // Intent 1: Contextual meaning (always runs on card open)
-window.ContextLens.runContextualQuery = async function (selectedText, pageContext, surroundingContext) {
-  window.ContextLens.logEvent('INTENT1_START', { selectedText: selectedText.slice(0, 60), domain: pageContext.domain });
+window.ReadIn.runContextualQuery = async function (selectedText, pageContext, surroundingContext) {
+  window.ReadIn.logEvent('INTENT1_START', { selectedText: selectedText.slice(0, 60), domain: pageContext.domain });
   const cached = await getFromCache(selectedText, 'contextual');
   if (cached) {
-    window.ContextLens.logEvent('INTENT1_DONE', { source: 'cache', hasKeywords: !!cached.searchKeywords, keywords: cached.searchKeywords });
+    window.ReadIn.logEvent('INTENT1_DONE', { source: 'cache', hasKeywords: !!cached.searchKeywords, keywords: cached.searchKeywords });
     return cached;
   }
 
@@ -413,22 +413,22 @@ window.ContextLens.runContextualQuery = async function (selectedText, pageContex
   const rawAnswer = await callLLM(prompt);
 
   const parsed = parseKeywordsFromAnswer(rawAnswer);
-  window.ContextLens.logEvent('KEYWORDS', { hasKeywords: !!parsed.keywords, keywords: parsed.keywords });
+  window.ReadIn.logEvent('KEYWORDS', { hasKeywords: !!parsed.keywords, keywords: parsed.keywords });
 
   const usageWarning = await checkUsageWarning('gemini');
   const result = { answer: parsed.answer, searchKeywords: parsed.keywords, usageWarning };
 
   await setCache(selectedText, 'contextual', result);
-  window.ContextLens.logEvent('INTENT1_DONE', { source: 'api', hasKeywords: !!result.searchKeywords, keywords: result.searchKeywords });
+  window.ReadIn.logEvent('INTENT1_DONE', { source: 'api', hasKeywords: !!result.searchKeywords, keywords: result.searchKeywords });
   return result;
 };
 
 // Intent 2: News / web lookup (on explicit button click)
-window.ContextLens.runNewsQuery = async function (selectedText, pageContext, surroundingContext, classification, searchKeywords) {
-  window.ContextLens.logEvent('NEWS_START', { selectedText: selectedText.slice(0, 40), searchKeywords });
+window.ReadIn.runNewsQuery = async function (selectedText, pageContext, surroundingContext, classification, searchKeywords) {
+  window.ReadIn.logEvent('NEWS_START', { selectedText: selectedText.slice(0, 40), searchKeywords });
   const cached = await getFromCache(selectedText, 'news');
   if (cached) {
-    window.ContextLens.logEvent('NEWS_DONE', { source: 'cache', sourceCount: cached.sources?.length });
+    window.ReadIn.logEvent('NEWS_DONE', { source: 'cache', sourceCount: cached.sources?.length });
     return cached;
   }
 
@@ -443,16 +443,16 @@ window.ContextLens.runNewsQuery = async function (selectedText, pageContext, sur
   const result = { answer, sources, usageWarning };
 
   await setCache(selectedText, 'news', result);
-  window.ContextLens.logEvent('NEWS_DONE', { source: 'api', sourceCount: sources.length });
+  window.ReadIn.logEvent('NEWS_DONE', { source: 'api', sourceCount: sources.length });
   return result;
 };
 
 // Intent 3: Deep dive (on explicit button click)
-window.ContextLens.runDeepDiveQuery = async function (selectedText, pageContext, surroundingContext, previousAnswer, classification) {
-  window.ContextLens.logEvent('DEEP_START', { classification, selectedText: selectedText.slice(0, 40) });
+window.ReadIn.runDeepDiveQuery = async function (selectedText, pageContext, surroundingContext, previousAnswer, classification) {
+  window.ReadIn.logEvent('DEEP_START', { classification, selectedText: selectedText.slice(0, 40) });
   const cached = await getFromCache(selectedText, 'deepdive');
   if (cached) {
-    window.ContextLens.logEvent('DEEP_DONE', { source: 'cache' });
+    window.ReadIn.logEvent('DEEP_DONE', { source: 'cache' });
     return cached;
   }
 
@@ -465,6 +465,6 @@ window.ContextLens.runDeepDiveQuery = async function (selectedText, pageContext,
   const result = { answer, usageWarning };
 
   await setCache(selectedText, 'deepdive', result);
-  window.ContextLens.logEvent('DEEP_DONE', { source: 'api' });
+  window.ReadIn.logEvent('DEEP_DONE', { source: 'api' });
   return result;
 };

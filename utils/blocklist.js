@@ -4,16 +4,16 @@ const BLOCKED_URL_PATTERNS = [
   'wallet', 'secure', 'auth', 'oauth', 'verify', 'verification'
 ];
 
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
-window.ContextLens.isBlockedPage = function () {
+window.ReadIn.isBlockedPage = function () {
   const url = window.location.href.toLowerCase();
   if (BLOCKED_URL_PATTERNS.some(p => url.includes(p))) return true;
   if (document.querySelector('input[type="password"]')) return true;
   return false;
 };
 
-window.ContextLens.isUserBlockedDomain = async function () {
+window.ReadIn.isUserBlockedDomain = async function () {
   return new Promise((resolve) => {
     chrome.storage.sync.get(['blockedDomains'], (result) => {
       resolve((result.blockedDomains || []).includes(window.location.hostname));

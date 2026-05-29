@@ -1,5 +1,5 @@
 (async function () {
-  const CL = window.ContextLens;
+  const CL = window.ReadIn;
   if (CL.isBlockedPage()) return;
   if (await CL.isUserBlockedDomain()) return;
 
@@ -12,13 +12,13 @@
 
   function createTriggerIcon() {
     const icon = document.createElement('div');
-    icon.id = 'contextlens-trigger';
+    icon.id = 'readin-trigger';
     icon.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="8" cy="8" r="7" fill="#4F46E5"/>
       <path d="M5.5 8.5C5.5 8.5 6.5 10 8 10C9.5 10 10.5 8.5 10.5 8.5" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
       <circle cx="6" cy="6.5" r="0.8" fill="white"/><circle cx="10" cy="6.5" r="0.8" fill="white"/>
     </svg>`;
-    icon.title = 'Look up with ContextLens';
+    icon.title = 'Look up with ReadIn';
     document.body.appendChild(icon);
     return icon;
   }
@@ -126,7 +126,7 @@
   }
 
   document.addEventListener('mouseup', (e) => {
-    if (e.target.closest('#contextlens-card') || e.target.closest('#contextlens-trigger')) return;
+    if (e.target.closest('#readin-card') || e.target.closest('#readin-trigger')) return;
     const sel = window.getSelection();
     const text = sel?.toString().trim();
     if (!text || text.length < 2) { hideTriggerIcon(); return; }
@@ -139,14 +139,14 @@
   });
 
   document.addEventListener('click', (e) => {
-    if (e.target.closest('#contextlens-trigger')) {
+    if (e.target.closest('#readin-trigger')) {
       e.preventDefault(); e.stopPropagation();
       if (!currentSelectedText || !savedSelectionRange) return;
       hideTriggerIcon();
       openCard(currentSelectedText);
       return;
     }
-    if (card && !e.target.closest('#contextlens-card')) { removeCard(); hideTriggerIcon(); }
+    if (card && !e.target.closest('#readin-card')) { removeCard(); hideTriggerIcon(); }
   });
 
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { removeCard(); hideTriggerIcon(); } });

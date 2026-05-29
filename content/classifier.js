@@ -1,4 +1,4 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
 const ENTITY_SIGNAL_WORDS = [
   'act', 'law', 'bill', 'regulation', 'ruling', 'lawsuit',
@@ -34,11 +34,11 @@ const COMMON_SENTENCE_WORDS = new Set([
   'year','yet','you','your'
 ]);
 
-window.ContextLens.classify = function (selectedText) {
+window.ReadIn.classify = function (selectedText) {
   const text = selectedText.trim();
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   const lowerText = text.toLowerCase();
-  const CL = window.ContextLens;
+  const CL = window.ReadIn;
 
   if (/^https?:\/\//.test(text) || /^[^\s@]+@[^\s@]+$/.test(text)) {
     CL.logEvent('CLASSIFY', { text, classification: 'skip', reason: 'url or email' });

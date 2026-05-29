@@ -1,4 +1,4 @@
-#contextlens-trigger {
+#readin-trigger {
   all: initial;
   position: absolute;
   z-index: 2147483646;
@@ -13,11 +13,11 @@
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-#contextlens-trigger.visible { display: flex; }
-#contextlens-trigger:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.5); }
-#contextlens-trigger svg { all: initial; display: block; }
+#readin-trigger.visible { display: flex; }
+#readin-trigger:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.5); }
+#readin-trigger svg { all: initial; display: block; }
 
-#contextlens-card {
+#readin-card {
   position: fixed;
   z-index: 2147483645;
 }

@@ -1,4 +1,4 @@
-window.ContextLens = window.ContextLens || {};
+window.ReadIn = window.ReadIn || {};
 
 // Lightweight markdown → HTML for LLM responses
 // Handles: ### headings, **bold**, * list items, numbered lists
@@ -340,9 +340,9 @@ const CARD_STYLES = `
   .hidden { display: none !important; }
 `;
 
-window.ContextLens.createCard = function (classification) {
+window.ReadIn.createCard = function (classification) {
   const card = document.createElement('div');
-  card.id = 'contextlens-card';
+  card.id = 'readin-card';
   card.dataset.classification = classification;
 
   const shadow = card.attachShadow({ mode: 'open' });
@@ -388,7 +388,7 @@ window.ContextLens.createCard = function (classification) {
   return card;
 };
 
-window.ContextLens.showGenericDefinition = function (card, dictResult) {
+window.ReadIn.showGenericDefinition = function (card, dictResult) {
   if (!dictResult) return;
   const el = card._shadow.querySelector('.cl-generic-def');
   const pos = dictResult.partOfSpeech ? `(${dictResult.partOfSpeech}) ` : '';
@@ -398,17 +398,17 @@ window.ContextLens.showGenericDefinition = function (card, dictResult) {
   el.classList.remove('hidden');
 };
 
-window.ContextLens.showAnswer = function (card, answer, searchKeywords) {
+window.ReadIn.showAnswer = function (card, answer, searchKeywords) {
   card._shadow.querySelector('.cl-loading').classList.add('hidden');
   card._shadow.querySelector('.cl-answer').innerHTML = renderMarkdown(answer);
   card._shadow.querySelector('.cl-answer').classList.remove('hidden');
   card._shadow.querySelector('.cl-actions-row').classList.remove('hidden');
   card.dataset.intent1Answer = answer;
   card.dataset.searchKeywords = searchKeywords || '';
-  window.ContextLens.logEvent('RENDER', { type: 'intent1', hasKeywords: !!searchKeywords, classification: card.dataset.classification });
+  window.ReadIn.logEvent('RENDER', { type: 'intent1', hasKeywords: !!searchKeywords, classification: card.dataset.classification });
 };
 
-window.ContextLens.showExpansionLoading = function (card) {
+window.ReadIn.showExpansionLoading = function (card) {
   const exp = card._shadow.querySelector('.cl-expansion');
   exp.classList.remove('hidden');
   exp.querySelector('.cl-expansion-loading').classList.remove('hidden');
@@ -417,7 +417,7 @@ window.ContextLens.showExpansionLoading = function (card) {
   exp.querySelector('.cl-expansion-error').classList.add('hidden');
 };
 
-window.ContextLens.showExpansionAnswer = function (card, answer, sources) {
+window.ReadIn.showExpansionAnswer = function (card, answer, sources) {
   const exp = card._shadow.querySelector('.cl-expansion');
   exp.querySelector('.cl-expansion-loading').classList.add('hidden');
 
@@ -454,15 +454,15 @@ window.ContextLens.showExpansionAnswer = function (card, answer, sources) {
 
   const buttons = card._shadow.querySelectorAll('.cl-action-btn');
   buttons.forEach(b => b.disabled = false);
-  window.ContextLens.logEvent('RENDER', { type: 'expansion', hasSources: !!sources?.length, sourceCount: sources?.length || 0 });
+  window.ReadIn.logEvent('RENDER', { type: 'expansion', hasSources: !!sources?.length, sourceCount: sources?.length || 0 });
 };
 
-window.ContextLens.showError = function (card, errorCode) {
+window.ReadIn.showError = function (card, errorCode) {
   card._shadow.querySelector('.cl-loading').classList.add('hidden');
   card._shadow.querySelector('.cl-answer').classList.add('hidden');
   const msgs = {
     'RATE_LIMIT': 'Daily limit reached — resets in a few hours.',
-    'NO_API_KEY': 'Add your API key in ContextLens settings.',
+    'NO_API_KEY': 'Add your API key in ReadIn settings.',
     'INVALID_KEY': 'Invalid API key. Check your key in settings.',
     'MODEL_NOT_FOUND': 'Model not found. Check your model name in settings.',
     'BAD_REQUEST': 'API request failed. Check your endpoint and model in settings.',
@@ -473,10 +473,10 @@ window.ContextLens.showError = function (card, errorCode) {
   const el = card._shadow.querySelector('.cl-error');
   el.innerHTML = `<span class="cl-error-icon">⚠</span><span>${msgs[errorCode] || msgs['DEFAULT']}</span>`;
   el.classList.remove('hidden');
-  window.ContextLens.logEvent('RENDER', { type: 'error', errorCode, phase: 'intent1' });
+  window.ReadIn.logEvent('RENDER', { type: 'error', errorCode, phase: 'intent1' });
 };
 
-window.ContextLens.showUsageWarning = function (card, warningCode) {
+window.ReadIn.showUsageWarning = function (card, warningCode) {
   const msgs = {
     'LLM_USAGE_HIGH': 'You\'ve used most of your daily lookups.',
     'TAVILY_USAGE_HIGH': 'You\'ve used most of your monthly web searches.'
@@ -490,7 +490,7 @@ window.ContextLens.showUsageWarning = function (card, warningCode) {
   row.parentNode.insertBefore(warning, row.nextSibling);
 };
 
-window.ContextLens.showExpansionError = function (card, errorCode) {
+window.ReadIn.showExpansionError = function (card, errorCode) {
   const exp = card._shadow.querySelector('.cl-expansion');
   exp.querySelector('.cl-expansion-loading').classList.add('hidden');
   const msgs = {
@@ -505,5 +505,5 @@ window.ContextLens.showExpansionError = function (card, errorCode) {
 
   const buttons = card._shadow.querySelectorAll('.cl-action-btn');
   buttons.forEach(b => b.disabled = false);
-  window.ContextLens.logEvent('RENDER', { type: 'expansion_error', errorCode });
+  window.ReadIn.logEvent('RENDER', { type: 'expansion_error', errorCode });
 };

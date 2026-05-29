@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ContextLens",
+  "name": "ReadIn",
   "version": "1.0.0",
   "description": "Select any text to get an instant, context-aware AI answer — without leaving the page.",
   "permissions": [

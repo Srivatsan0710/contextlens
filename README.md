@@ -1,4 +1,4 @@
-# ContextLens
+# ReadIn
 
 Select any text on a webpage → click the indigo icon → get a context-aware AI answer in an inline card. No sidebars, no new tabs, no context switching.
 
@@ -6,7 +6,7 @@ Select any text on a webpage → click the indigo icon → get a context-aware A
 
 ## How It Works
 
-**Select text** on any page, click the indigo icon that appears, and ContextLens shows an inline card anchored to your selection. The card knows what page you're on and tailors the answer to the reading context.
+**Select text** on any page, click the indigo icon that appears, and ReadIn shows an inline card anchored to your selection. The card knows what page you're on and tailors the answer to the reading context.
 
 For vocabulary words, a generic dictionary definition renders instantly (~100ms) while the contextual AI answer loads (~1-2s). Two action buttons let you go deeper — deep vocabulary or web lookup — with one click.
 
@@ -53,7 +53,7 @@ For vocabulary words, a generic dictionary definition renders instantly (~100ms)
 
 1. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey) — no credit card required
 2. (Optional) Get a Tavily API key from [tavily.com](https://tavily.com) for web lookup features — 1,000 free searches/month
-3. Click the ContextLens extension icon → enter your keys → save
+3. Click the ReadIn extension icon → enter your keys → save
 4. Select text on any page and click the indigo icon
 
 ---
@@ -90,19 +90,19 @@ contextlens/
 
 ## Observability
 
-Open DevTools Console on any page and filter by `[ContextLens` to see the full decision trace for every lookup:
+Open DevTools Console on any page and filter by `[ReadIn` to see the full decision trace for every lookup:
 
 ```
-[ContextLens:SELECT]       text="2022 Eliminator" wordCount=2
-[ContextLens:CLASSIFY]     "2022 Eliminator" → entity (everyWordCapped)
-[ContextLens:CACHE]        intent=contextual → MISS
-[ContextLens:LLM_REQ]      provider=gemini promptLen=287
-[ContextLens:LLM_RES]      latency=1340ms
-[ContextLens:KEYWORDS]     hasKeywords=true "IPL 2022 Eliminator RCB vs LSG"
-[ContextLens:RENDER]       type=intent1 hasKeywords=true
-[ContextLens:ACTION]       intent=news
-[ContextLens:TAVILY_REQ]   query="IPL 2022 Eliminator" topic=news
-[ContextLens:RENDER]       type=expansion hasSources=true sourceCount=5
+[ReadIn:SELECT]       text="2022 Eliminator" wordCount=2
+[ReadIn:CLASSIFY]     "2022 Eliminator" → entity (everyWordCapped)
+[ReadIn:CACHE]        intent=contextual → MISS
+[ReadIn:LLM_REQ]      provider=gemini promptLen=287
+[ReadIn:LLM_RES]      latency=1340ms
+[ReadIn:KEYWORDS]     hasKeywords=true "IPL 2022 Eliminator RCB vs LSG"
+[ReadIn:RENDER]       type=intent1 hasKeywords=true
+[ReadIn:ACTION]       intent=news
+[ReadIn:TAVILY_REQ]   query="IPL 2022 Eliminator" topic=news
+[ReadIn:RENDER]       type=expansion hasSources=true sourceCount=5
 ```
 
 ---
