@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "ContextLens",
+  "version": "1.0.0",
+  "description": "Select any text to get an instant, context-aware AI answer — without leaving the page.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "utils/blocklist.js",
+        "utils/context-extractor.js",
+        "utils/observability.js",
+        "content/classifier.js",
+        "utils/api.js",
+        "popup-card/card-renderer.js",
+        "content/positioner.js",
+        "content/content.js"
+      ],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "settings/settings.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "settings/settings.html"
+}

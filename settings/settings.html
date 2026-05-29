@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContextLens Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="cl-settings">
+    <div class="cl-settings-header">
+      <div class="cl-logo">
+        <div class="cl-logo-icon">◎</div>
+        <span>ContextLens</span>
+      </div>
+      <p class="cl-tagline">Context-aware lookup, right where you're reading.</p>
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">Provider</label>
+      <p class="cl-hint">Choose which AI service powers the contextual answers.</p>
+      <select id="llmProvider" class="cl-select">
+        <option value="gemini">Gemini (Google)</option>
+        <option value="openai">OpenAI Compatible</option>
+      </select>
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">API Endpoint</label>
+      <p class="cl-hint">Base URL for the API. Auto-filled based on provider, but you can override.</p>
+      <input type="text" id="llmEndpoint" class="cl-input" />
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">Model <span class="cl-required">*</span></label>
+      <p class="cl-hint">Model name (e.g. <span id="modelExample">gemini-2.0-flash</span>).</p>
+      <input type="text" id="llmModel" class="cl-input" placeholder="gemini-2.0-flash" />
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">API Key <span class="cl-required">*</span></label>
+      <p class="cl-hint" id="apiKeyHint">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> — no credit card required.</p>
+      <div class="cl-input-row">
+        <input type="password" id="llmKey" class="cl-input" />
+        <button class="cl-show-btn" data-target="llmKey">Show</button>
+      </div>
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">Tavily API Key <span class="cl-optional">(for news lookups)</span></label>
+      <p class="cl-hint">Get 1,000 free searches/month at <a href="https://tavily.com" target="_blank">tavily.com</a> — no credit card required.</p>
+      <div class="cl-input-row">
+        <input type="password" id="tavilyKey" class="cl-input" placeholder="tvly-..." />
+        <button class="cl-show-btn" data-target="tavilyKey">Show</button>
+      </div>
+    </div>
+
+    <div class="cl-section">
+      <label class="cl-label">Disabled Sites</label>
+      <p class="cl-hint">Auto-disabled on login, banking, and payment pages. Add more domains below.</p>
+      <div class="cl-input-row">
+        <input type="text" id="newBlockedDomain" class="cl-input" placeholder="e.g. example.com" />
+        <button class="cl-add-btn" id="addDomainBtn">Add</button>
+      </div>
+      <div id="blockedDomainsList" class="cl-tags"></div>
+    </div>
+
+    <div class="cl-actions">
+      <button class="cl-save-btn" id="saveBtn">Save Settings</button>
+      <span class="cl-save-status" id="saveStatus"></span>
+    </div>
+
+    <div class="cl-footer-note">
+      ContextLens reads page text only when you trigger a lookup. Nothing is stored or sent beyond your API providers.
+    </div>
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>
